@@ -1,0 +1,44 @@
+gmx rms -f processedMD.xtc -s bace2_md.tpr -o rmsd.xvg -m rmsd-raw.xpm
+
+gmx cluster -f processedMD.xtc -s bace2_md.tpr -method gromos -cutoff 0.18 -g cluster.log -dm rmsd-raw.xpm -o rmsd-clust.xpm -dist rmsd-dist.xvg -ev rmsd-eig.xvg -conv mc-conv.xvg -sz clust-size.xvg -tr clust-trans.xpm -ntr clust-trans.xvg -clid clust-id.xvg -cl clusters.pdb -clndx clusters.ndx 
+
+
+
+
+Options to specify output files:
+
+-om [<.xpm>] (rmsd-raw.xpm)
+X PixMap compatible matrix file
+
+-o [<.xpm>] (rmsd-clust.xpm)
+X PixMap compatible matrix file
+
+-g [<.log>] (cluster.log)
+Log file
+
+-dist [<.xvg>] (rmsd-dist.xvg) (Optional)
+xvgr/xmgr file
+
+-ev [<.xvg>] (rmsd-eig.xvg) (Optional)
+xvgr/xmgr file
+
+-conv [<.xvg>] (mc-conv.xvg) (Optional)
+xvgr/xmgr file
+
+-sz [<.xvg>] (clust-size.xvg) (Optional)
+xvgr/xmgr file
+
+-tr [<.xpm>] (clust-trans.xpm) (Optional)
+X PixMap compatible matrix file
+
+-ntr [<.xvg>] (clust-trans.xvg) (Optional)
+xvgr/xmgr file
+
+-clid [<.xvg>] (clust-id.xvg) (Optional)
+xvgr/xmgr file
+
+-cl [<.xtc/.trr/…>] (clusters.pdb) (Optional)
+Trajectory: xtc trr cpt gro g96 pdb tng
+
+-clndx [<.ndx>] (clusters.ndx) (Optional)
+Index file

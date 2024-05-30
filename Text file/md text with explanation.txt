@@ -1,0 +1,91 @@
+*Ask about the gromacs version first (gmx_5)*
+gmx pdb2gmx -f bace1.pdb -o bace1.gro -ignh
+
+*select force field*
+Press 1
+
+*select water model*
+Press 1 (TIP3P)
+
+gmx editconf -f bace1.gro -o bace1_box.gro -c -d 1.0 -bt cubic
+
+gmx solvate -cp bace1_box.gro -cs spc216.gro -o bace1_solv.gro -p topol.top
+
+*Use VMD to visualize the generated file (solv.gro)*
+*Browse and load*
+
+
+
+*Follow by system building to insert counter ions to generate a neutralized protein*
+gmx grompp -f minim.mdp -c bace1_solv.gro -p topol.top -o ions.tpr
+
+gmx genion -s ions.tpr -o bace1_solv_ions.gro -p topol.top -neutral
+
+*select water group to replace the counter ions*
+Press 13
+
+
+
+*system energy minimization*
+gmx grompp -f minim.mdp -c bace1_solv_ions.gro -p topol.top -o em.tpr
+
+gmx mdrun -v -deffnm em
+
+gmx energy -f em.edr -o potential.xvg
+
+*Choose potential*
+Type 11 0
+
+*Visualize the output file using GRACE software*
+
+
+gmx grompp -f nvt.mdp -c em.gro -p topol.top -o nvt.tpr
+
+*first phase of equilibration run*
+gmx mdrun -deffnm nvt -v
+
+
+gmx energy -f nvt.edr -o  temperature.xvg
+
+*CHoose temperature*
+Press 16
+Check the temperature value
+
+*second phase of equilibration run (this time include pressure parameter)*
+gmx grompp -f npt.mdp -c nvt.gro -t nvt.cpt -p topol.top -o npt.tpr
+
+gmx mdrun -deffnm npt -v
+
+gmx energy -f npt.edr -o pressure.xvg
+
+*Select pressure*
+Press 17
+Check the pressure value
+If deflate too much, then can change the parameter from 50ps to 100ps or higher
+
+
+*final steps MD run*
+change parameters to 100ns/ 50000000 nsteps
+
+gmx grompp -f md.mdp -c npt.gro -t  npt.cpt -p topol.top -o bace1_md.tpr
+
+gmx mdrun -deffnm bace1_md -v
+
+
+<--------------------- AFTER MD RUN ------------------------>
+
+gmx energy -f bace1_md.edr -o MD_temp.xvg
+
+*Type 14 to choose temperature*
+
+
+
+
+
+
+*LAST 4 LINES ONLY FOR WINDOWS SUBLINUX*
+
+cd /
+cd mnt/c/Users/Acer/Desktop/md/
+gmx grompp -f md.mdp -c npt.gro -t npt.cpt -p 1.top -o full_md.tpr
+gmx mdrun -deffnm full_md -v

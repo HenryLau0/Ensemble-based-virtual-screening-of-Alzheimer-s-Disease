@@ -1,0 +1,65 @@
+<---------- Refine the graphs ----------->
+cd /
+
+cd mnt/c/Users/Acer/Desktop/FYPmaster/6thstep-Complexmd/complex2done2/
+
+gmx energy -f comp_md.edr -o MD_temp.xvg
+
+*CHOOSE temperature*
+15 0
+
+xmgrace MD_temp.xvg
+xmgrace potential.xvg
+
+gmx energy -f comp_md.edr -o MD_pressure.xvg
+
+*CHOOSE pressure*
+17 0
+
+xmgrace MD_pressure.xvg
+
+<------- Post processing ------->
+
+gmx trjconv -f bace2_md.xtc -s bace2_md.tpr -o processedMD.xtc -pbc mol -ur compact
+
+*CHOOSE SYSTEM*
+0
+
+gmx rms -s bace2_md.tpr -f processedMD.xtc -o MDrmsd.xvg
+
+*CHOOSE C-alpha twice*
+3 
+3
+
+gmx rmsf -s bace2_md.tpr -f processedMD.xtc -o MDrmsf.xvg -res
+
+*CHOOSE protein*
+1
+
+gmx gyrate -s bace2_md.tpr -f processedMD.xtc -o MDgyr.xvg
+
+*CHOOSE protien*
+1
+
+*MOVE THE FILE TO ANYDESK AS CHIMERA IS SHIT*
+*OPEN CHIMERA, TOOLS, MD/EMSEMBLE ANALYSIS, MDMOVIE*
+*LOAD THE FILE BY SELECTING TRAJECTORY FORMAT AS GROMACS,THEN RUN bace2_md.tpr AS INPUT*
+*FOLLOW BY LOADING processedMD.xtc AT TRAJECTORY*
+
+<------- INSIDE CHIMERA --------->
+
+*REMOVE WATER*
+select, residue, SOL
+action, atom/bonds, delete
+
+*REMOVE COUNTER IONS*
+select, residue, NA OR CL (depends)
+actions, atom/bonds, show
+actions, atom/bonds, delete
+
+*OPEN THE MINIMIZED MD MOVIE*
+adjust the protein to better angle and view
+actions, hold selection steady
+click play button
+
+

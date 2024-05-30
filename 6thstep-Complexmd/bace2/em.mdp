@@ -1,0 +1,19 @@
+; Run control
+integrator	= steep		; Algorithm (steep = steepest descent minimization)
+
+; Energy minimization
+emtol		= 10000.0  	; Stop minimization when the maximum force < 10000.0 kJ/mol/nm
+emstep      = 0.01     ; Energy step size
+nsteps		= 50000	  	; Maximum number of (minimization) steps to perform
+
+; Neighbor searching
+nstlist		    = 1		    
+cutoff-scheme   = Verlet
+ns_type		    = grid		
+pbc		        = xyz 
+
+; Electrostatics
+coulombtype	    = PME
+rcoulomb	    = 1.0
+rvdw		    = 1.0
+

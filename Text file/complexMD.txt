@@ -1,0 +1,57 @@
+*Topology building*
+gmx pdb2gmx -f bace1.pdb -ignh -o processed.pdb -p complex.top
+
+gmx editconf -f complex.pdb -o comp_box.gro -c -d 1.0 -bt cubic
+
+gmx solvate -cp comp_box.gro -cs spc216.gro -o comp_solv.gro -p complex.top
+
+gmx grompp -f ions.mdp -c comp_solv.gro -p complex.top -o ions.tpr
+
+gmx genion -s ions.tpr -o comp_solv_ions.gro -p complex.top -neutral
+
+Type 15 (SOL) 
+
+
+*System energy minimisation*
+gmx grompp -f minim.mdp -c comp_solv_ions.gro -p complex.top -o minim.tpr
+
+gmx mdrun -v -deffnm minim
+
+gmx energy -f minim.edr -o potential.xvg
+
+Choose potential [12 0]
+
+xmgrace potential.xvg
+
+
+*System Preparation*
+gmx genrestr -f ligand.pdb -o posre_ligand.itp -fc 1000 1000 1000
+
+gmx make_ndx -f em.gro -o index.ndx
+
+Type 1 | 13
+
+q
+
+
+*Equilibration run*
+gmx grompp -f nvt.mdp -c em.gro -p complex.top -n index.ndx -o nvt.tpr
+
+gmx mdrun -deffnm nvt -v
+
+gmx energy -f nvt.edr -o temperature.xvg
+
+
+gmx grompp -f npt.mdp -c nvt.gro -t nvt.cpt -p complex.top -n index.ndx -o npt.tpr
+
+gmx mdrun -deffnm npt -v
+
+gmx energy -f npt.edr -o pressure.xvg
+
+
+*Production run*
+gmx grompp -f md.mdp -c npt.gro -t npt.cpt -p complex.top -n index.ndx -o comp_md.tpr 
+
+gmx mdrun -deffnm comp_md -v
+
+
